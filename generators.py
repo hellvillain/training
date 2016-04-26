@@ -1,6 +1,8 @@
 alist_1 = range(1, 20, 1)
 alist_2 = range(1, 20, 1)
 
+#4 a i: infinite generator is going to be here:
+
 #4 a ii: own xrange generator
 class Xray(object):
 
