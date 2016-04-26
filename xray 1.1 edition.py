@@ -1,3 +1,4 @@
+#4 a ii, own xrange generator
 class Xray(object):
 
     def __init__(self, start, stop=None, step=1):
