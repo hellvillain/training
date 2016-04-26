@@ -1,6 +1,5 @@
 alist_1 = range(1, 20, 1)
 alist_2 = range(1, 20, 1)
-alist_3 = range(1, 20, 3)
 
 
 # 5a, 1, def ver.: making squares from a list of numbers
