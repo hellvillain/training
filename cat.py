@@ -1,16 +1,24 @@
-# import tempfile
-# 
-# 6. creating cat function
-# Am I supposed to create a file and fill it up with data on-the-go?
-# If I am, what type of data should I fill the file?
-# filepath_one = "C:/Users/ashapkin/Documents/Training/sin.txt"
-# filepath_two = "C:/Users/ashapkin/Documents/Training/bread.txt"
-# 
-# def cat(*args):
-#     with tempfile.TemporaryFile() as tmp:
-#         for every in args:
-#             tmp.writelines(line if '\n' in line else "%s\n" % line for line in open(every, 'r'))
-#         tmp.seek(0)
-#         print tmp.read()
-# 
-# cat(filepath_one, filepath_two)
+import random
+import os
+import tempfile
+import shutil
+
+folder = './random_files'
+
+def random_files(folder):
+    for files in range(random.randint(3, 15)):
+        with open(folder + '/' + str(files) + '.txt', 'w+') as f:
+            for line in range(random.randint(10, 50)):
+                f.writelines(''.join(random.choice('Chewbacca') for _ in range(random.randint(10, 50))) + '\n')
+
+def cat(folder):
+    random_files(folder)
+    with tempfile.TemporaryFile() as tmp:
+        for every in os.listdir(folder):
+            tmp.writelines(line if '\n' in line else "%s\n" % line for line in open(folder + '/' + every, 'r'))
+        tmp.seek(0)
+        print tmp.read()
+    shutil.rmtree(folder)
+
+os.makedirs(folder)
+cat(folder)
