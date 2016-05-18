@@ -22,8 +22,7 @@ def mixed_second(alist):
     return [x**2 for x in alist if x % 2 == 0 and alist.index(x) % 2 != 0]
 
 def each_second_mixed(alist):
-    b = [x*x for x in alist if x % 2 == 0][::3]
-    return b
+    return [x*x for x in alist if x % 2 == 0][::3]
 
 
 print "5a, 1: squaring:", squaring(alist_2)
