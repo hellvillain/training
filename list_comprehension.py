@@ -21,6 +21,10 @@ lambda_each_second = lambda alist: [x for x in alist if x % 2 == 0]
 def mixed_second(alist):
     return [x**2 for x in alist if x % 2 == 0 and alist.index(x) % 2 != 0]
 
+def each_second_mixed(alist):
+    b = [x*x for x in alist if x % 2 == 0][::3]
+    return b
+
 
 print "5a, 1: squaring:", squaring(alist_2)
 print "5a, 2: lambda_squaring:", lambda_squaring(alist_2)
