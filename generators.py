@@ -37,7 +37,7 @@ def zipping_right(alist_1, alist_2):
                 
 
 print "4a i, infinite gen:", infinite(4)
-print "4a ii, xrange perfomance:", list(Xray(0, 9, 2))
+print "4a ii, xrange performance:", list(Xray(0, 9, 2))
 print "4b, original zip output:", zip(alist_1, alist_2)
 print "4b, my zip output:", my_zipping(alist_1, alist_2)
 print "4b, right output:", zipping_right(alist_1, alist_2)
