@@ -5,14 +5,14 @@ import shutil
 
 folder = './random_files'
 
-#creating random number of files with random lines inside
+# creating random number of files with random lines inside
 def random_files(folder):
     for files in range(random.randint(3, 15)):
         with open(folder + '/' + str(files) + '.txt', 'w+') as f:
             for line in range(random.randint(10, 50)):
                 f.writelines(''.join(random.choice('Chewbacca') for _ in range(random.randint(10, 50))) + '\n')
 
-#cat!
+# cat!
 def cat(folder):
     random_files(folder)
     with tempfile.TemporaryFile() as tmp:
