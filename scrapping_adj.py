@@ -28,7 +28,7 @@ def to_start(kwargs):
              "&openDateOverview=0&adultCount=1&childCount=0&infantCount=0".format(**kwargs)
     resp_one = requests.get(domain, stream=True)
     ssid_url = resp_one.url
-    return resp_one.url
+    return ssid_url
 
 
 print to_start(options)
