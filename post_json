@@ -1,0 +1,32 @@
+from lxml import etree
+import requests
+
+form_data = {
+    " _ajax[templates][]": ["main", "priceoverview", "infos", "flightinfo"],
+    "_ajax[requestParams][departure]": "Warsaw",
+    "_ajax[requestParams][destination]": "Sofia",
+    "_ajax[requestParams][returnDeparture]": "",
+    "_ajax[requestParams][returnDestination]": "",
+    "_ajax[requestParams][outboundDate]": "2016-06-16",
+    "_ajax[requestParams][returnDate]": "2016-06-16",
+    "_ajax[requestParams][adultCount]": "1",
+    "_ajax[requestParams][childCount]": "0",
+    "_ajax[requestParams][infantCount]": "0",
+    "_ajax[requestParams][openDateOverview]": "",
+    "_ajax[requestParams][oneway]": "on"
+}
+headers = {
+    "Cookie": "ABSESS=t0emo9pm4mq4530jvq3qsp9ge7; "
+              "remember=0%3Ben%3BGB; PHPSESSID=66l2fg04oir3gs99a9sjo9ljp4; "
+              "_gat_UA-35638432-3=1; "
+              "_gat=1; startConnection=WAW%40SOF%402016-06-16%402016-06-16; "
+              "_ga=GA1.2.1268767806.1464299394; lst=1464728761",
+              "X-Requested-With": "XMLHttpRequest",
+}
+
+domain = "http://www.flyniki.com/en/booking/flight/vacancy.php?sid=ba822528ab62dafa8ca1"
+
+
+def to_start():
+    first = requests.post(domain, allow_redirects=False, data=form_data, headers=headers)
+    return first.json()
