@@ -1,5 +1,19 @@
 import requests
 
+values = {"market": "RU",
+          "language": "en",
+          "bookingmask_widget_id": "bookingmask-widget-stageoffer",
+          "bookingmask_widget_dateformat": "dd/mm/yy",
+          "departure": "Warsaw",
+          "destination": "Sofia",
+          "outboundDate": "16/06/2016",
+          "returnDate": "16/06/2016",
+          "adultCount": "1",
+          "childCount": "0",
+          "infantCount": "0",
+          "submitSearch":""
+          }
+
 form_data = {
     " _ajax[templates][]": ["main", "priceoverview", "infos", "flightinfo"],
     "_ajax[requestParams][departure]": "Warsaw",
@@ -14,18 +28,14 @@ form_data = {
     "_ajax[requestParams][openDateOverview]": "",
     "_ajax[requestParams][oneway]": "on"
 }
-headers = {
-    "Cookie": "ABSESS=t0emo9pm4mq4530jvq3qsp9ge7; "
-              "remember=0%3Ben%3BGB; PHPSESSID=66l2fg04oir3gs99a9sjo9ljp4; "
-              "_gat_UA-35638432-3=1; "
-              "_gat=1; startConnection=WAW%40SOF%402016-06-16%402016-06-16; "
-              "_ga=GA1.2.1268767806.1464299394; lst=1464728761",
-              "X-Requested-With": "XMLHttpRequest",
-}
 
-domain = "http://www.flyniki.com/en/booking/flight/vacancy.php?sid=ba822528ab62dafa8ca1"
-
+domain = "http://www.flyniki.com/en/start.php"
 
 def to_start():
-    first = requests.post(domain, allow_redirects=False, data=form_data, headers=headers)
-    return first.json()
+    virgin = requests.Session()
+    first = virgin.get(domain)
+    second = virgin.post(domain, data=values)
+    third = virgin.post(second.url, data=form_data)
+    return third.json()
+
+print to_start()
