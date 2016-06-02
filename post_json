@@ -1,5 +1,6 @@
 import requests
 
+
 values = {"market": "RU",
           "language": "en",
           "bookingmask_widget_id": "bookingmask-widget-stageoffer",
@@ -33,7 +34,7 @@ domain = "http://www.flyniki.com/en/start.php"
 
 def to_start():
     virgin = requests.Session()
-    first = virgin.get(domain)
+    virgin.get(domain)
     second = virgin.post(domain, data=values)
     third = virgin.post(second.url, data=form_data)
     return third.json()
