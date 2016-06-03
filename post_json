@@ -1,31 +1,69 @@
 import requests
+import json
+
+
+values = {"market": "RU",
+          "language": "en",
+          "bookingmask_widget_id": "bookingmask-widget-stageoffer",
+          "bookingmask_widget_dateformat": "dd/mm/yy",
+          "departure": "Warsaw",
+          "destination": "Sofia",
+          "outboundDate": "16/06/2016",
+          "returnDate": "23/06/2016",
+          "adultCount": "1",
+          "childCount": "0",
+          "infantCount": "0",
+          "submitSearch":""
+          }
 
 form_data = {
     " _ajax[templates][]": ["main", "priceoverview", "infos", "flightinfo"],
     "_ajax[requestParams][departure]": "Warsaw",
     "_ajax[requestParams][destination]": "Sofia",
-    "_ajax[requestParams][returnDeparture]": "",
-    "_ajax[requestParams][returnDestination]": "",
+    "_ajax[requestParams][returnDeparture]": "Sofia",
+    "_ajax[requestParams][returnDestination]": "Warsaw",
     "_ajax[requestParams][outboundDate]": "2016-06-16",
-    "_ajax[requestParams][returnDate]": "2016-06-16",
+    "_ajax[requestParams][returnDate]": "2016-06-23",
     "_ajax[requestParams][adultCount]": "1",
     "_ajax[requestParams][childCount]": "0",
     "_ajax[requestParams][infantCount]": "0",
     "_ajax[requestParams][openDateOverview]": "",
-    "_ajax[requestParams][oneway]": "on"
-}
-headers = {
-    "Cookie": "ABSESS=t0emo9pm4mq4530jvq3qsp9ge7; "
-              "remember=0%3Ben%3BGB; PHPSESSID=66l2fg04oir3gs99a9sjo9ljp4; "
-              "_gat_UA-35638432-3=1; "
-              "_gat=1; startConnection=WAW%40SOF%402016-06-16%402016-06-16; "
-              "_ga=GA1.2.1268767806.1464299394; lst=1464728761",
-              "X-Requested-With": "XMLHttpRequest",
+    "_ajax[requestParams][oneway]": "off"
 }
 
-domain = "http://www.flyniki.com/en/booking/flight/vacancy.php?sid=ba822528ab62dafa8ca1"
-
+domain = "http://www.flyniki.com/en/start.php"
 
 def to_start():
-    first = requests.post(domain, allow_redirects=False, data=form_data, headers=headers)
-    return first.json()
+    virgin = requests.Session()
+    virgin.get(domain)
+    second = virgin.post(domain, data=values)
+    third = virgin.post(second.url, data=form_data)
+    data_unicode = third.json()
+    readable_json = json.dumps(data_unicode, indent=4, sort_keys=True)
+    return readable_json
+
+# def json2xml(json_obj, line_padding=""):
+#     result_list = list()
+#
+#     json_obj_type = type(json_obj)
+#
+#     if json_obj_type is list:
+#         for sub_elem in json_obj:
+#             result_list.append(json2xml(sub_elem, line_padding))
+#
+#         return "\n".join(result_list)
+#
+#     if json_obj_type is dict:
+#         for tag_name in json_obj:
+#             sub_obj = json_obj[tag_name]
+#             result_list.append("%s<%s>" % (line_padding, tag_name))
+#             result_list.append(json2xml(sub_obj, "\t" + line_padding))
+#             result_list.append("%s</%s>" % (line_padding, tag_name))
+#
+#         return "\n".join(result_list)
+#
+#     return "%s%s" % (line_padding, json_obj)
+
+# print(json2xml(to_start()))
+
+print to_start()
