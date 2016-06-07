@@ -2,6 +2,8 @@ import requests
 from lxml import etree
 import unicodedata
 import json
+import lxml.html
+from io import StringIO, BytesIO
 
 
 values = {"market": "RU",
@@ -41,36 +43,12 @@ def to_start():
     second = virgin.post(domain, data=values)
     third = virgin.post(second.url, data=form_data)
     data_unicode = third.json()
-    # data_string = data_unicode.encode('ascii','ignore')
-    # tree = etree.parse(pre_tree)
-    # root = etree.parse(etree.fromstring(data_string))
     readable_json = json.dumps(data_unicode, indent=4, sort_keys=True)
-    bb = etree.fromstring(data_string)
-    # print data_unicode['templates']['main']
-    return bb
-
-# def json2xml(json_obj, line_padding=""):
-#     result_list = list()
-#
-#     json_obj_type = type(json_obj)
-#
-#     if json_obj_type is list:
-#         for sub_elem in json_obj:
-#             result_list.append(json2xml(sub_elem, line_padding))
-#
-#         return "\n".join(result_list)
-#
-#     if json_obj_type is dict:
-#         for tag_name in json_obj:
-#             sub_obj = json_obj[tag_name]
-#             result_list.append("%s<%s>" % (line_padding, tag_name))
-#             result_list.append(json2xml(sub_obj, "\t" + line_padding))
-#             result_list.append("%s</%s>" % (line_padding, tag_name))
-#
-#         return "\n".join(result_list)
-#
-#     return "%s%s" % (line_padding, json_obj)
-
-# print(json2xml(to_start()))
+    flight_info_tree = lxml.html.fromstring(data_unicode['templates']['main'])
+    # tree = lxml.html.fromstring(data_unicode['templates']['main'])
+    # first_xpath = tree.xpath("(.//*[@class='current']/span/text())")
+    departure = flight_info_tree.xpath(".//*[@class=\"outbound block\"]//div[@class=\"vacancy_route\"]/text()")
+    destination = flight_info_tree.xpath(".//*[@class=\"return block\"]//div[@class=\"vacancy_route\"]/text()")
+    return departure, destination
 
 print to_start()
