@@ -1,23 +1,19 @@
 import requests
-from lxml import etree
-import unicodedata
 import json
-import lxml.html
-from io import StringIO, BytesIO
+from lxml import html
 
-
-values = {"market": "RU",
+values = {"market": "GB",
           "language": "en",
           "bookingmask_widget_id": "bookingmask-widget-stageoffer",
           "bookingmask_widget_dateformat": "dd/mm/yy",
           "departure": "Warsaw",
           "destination": "Sofia",
-          "outboundDate": "16/06/2016",
-          "returnDate": "23/06/2016",
+          "outboundDate": "15/06/2016",
+          "returnDate": "22/06/2016",
           "adultCount": "1",
           "childCount": "0",
           "infantCount": "0",
-          "submitSearch":""
+          "submitSearch": ""
           }
 
 form_data = {
@@ -26,16 +22,16 @@ form_data = {
     "_ajax[requestParams][destination]": "Sofia",
     "_ajax[requestParams][returnDeparture]": "Sofia",
     "_ajax[requestParams][returnDestination]": "Warsaw",
-    "_ajax[requestParams][outboundDate]": "2016-06-16",
-    "_ajax[requestParams][returnDate]": "2016-06-23",
+    "_ajax[requestParams][outboundDate]": "2016-06-15",
+    "_ajax[requestParams][returnDate]": "2016-06-22",
     "_ajax[requestParams][adultCount]": "1",
     "_ajax[requestParams][childCount]": "0",
     "_ajax[requestParams][infantCount]": "0",
     "_ajax[requestParams][openDateOverview]": "",
-    "_ajax[requestParams][oneway]": "off"
 }
 
 domain = "http://www.flyniki.com/en/start.php"
+
 
 def to_start():
     virgin = requests.Session()
@@ -44,11 +40,13 @@ def to_start():
     third = virgin.post(second.url, data=form_data)
     data_unicode = third.json()
     readable_json = json.dumps(data_unicode, indent=4, sort_keys=True)
-    flight_info_tree = lxml.html.fromstring(data_unicode['templates']['main'])
-    # tree = lxml.html.fromstring(data_unicode['templates']['main'])
-    # first_xpath = tree.xpath("(.//*[@class='current']/span/text())")
-    departure = flight_info_tree.xpath(".//*[@class=\"outbound block\"]//div[@class=\"vacancy_route\"]/text()")
-    destination = flight_info_tree.xpath(".//*[@class=\"return block\"]//div[@class=\"vacancy_route\"]/text()")
-    return departure, destination
+    general_tree = html.fromstring(data_unicode['templates']['main'])
+    departure = general_tree.xpath(".//*[@class=\"outbound block\"]//div[@class=\"vacancy_route\"]/text()")
+    destination = general_tree.xpath(".//*[@class=\"return block\"]//div[@class=\"vacancy_route\"]/text()")
+    prices = general_tree.xpath(".//div[@class=\"current\"]/span/text()")
+    satan_price = general_tree.xpath(".//*[@id='flighttables']/div[1]/div[2]/table/tbody/tr[1]/td[5]//div[@class=\"current\"]/span/text()")
+    # return departure, destination, list(prices)
+    return departure, destination, prices
+
 
 print to_start()
