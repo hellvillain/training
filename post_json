@@ -1,52 +1,79 @@
 import requests
-import json
+import sys
 from lxml import html
 
-values = {"market": "GB",
-          "language": "en",
-          "bookingmask_widget_id": "bookingmask-widget-stageoffer",
-          "bookingmask_widget_dateformat": "dd/mm/yy",
-          "departure": "Warsaw",
-          "destination": "Sofia",
-          "outboundDate": "15/06/2016",
-          "returnDate": "22/06/2016",
-          "adultCount": "1",
-          "childCount": "0",
-          "infantCount": "0",
-          "submitSearch": ""
-          }
 
-form_data = {
-    " _ajax[templates][]": ["main", "priceoverview", "infos", "flightinfo"],
-    "_ajax[requestParams][departure]": "Warsaw",
-    "_ajax[requestParams][destination]": "Sofia",
-    "_ajax[requestParams][returnDeparture]": "Sofia",
-    "_ajax[requestParams][returnDestination]": "Warsaw",
-    "_ajax[requestParams][outboundDate]": "2016-06-15",
-    "_ajax[requestParams][returnDate]": "2016-06-22",
-    "_ajax[requestParams][adultCount]": "1",
-    "_ajax[requestParams][childCount]": "0",
-    "_ajax[requestParams][infantCount]": "0",
-    "_ajax[requestParams][openDateOverview]": "",
-}
-
-domain = "http://www.flyniki.com/en/start.php"
+def changed_string(str):
+    return (str[-4:] + str[2:-4] + str[:2]).replace("/", "-")
 
 
-def to_start():
+def get_prices(origin, destination, outbound_date, return_date=""):
+
+    values = {"market": "GB",
+              "language": "en",
+              "bookingmask_widget_id": "bookingmask-widget-stageoffer",
+              "bookingmask_widget_dateformat": "dd/mm/yy",
+              "departure": str(origin).capitalize(),
+              "destination": str(destination).capitalize(),
+              "outboundDate": str(outbound_date),
+              "returnDate": str(return_date),
+              "adultCount": "1",
+              "childCount": "0",
+              "infantCount": "0",
+              "submitSearch": ""
+              }
+
+    form_data = {" _ajax[templates][]": ["main", "priceoverview", "infos", "flightinfo"],
+                 "_ajax[requestParams][departure]": str(origin),
+                 "_ajax[requestParams][destination]": str(destination),
+                 "_ajax[requestParams][returnDeparture]": str(destination),
+                 "_ajax[requestParams][returnDestination]": str(origin),
+                 "_ajax[requestParams][outboundDate]": changed_string(outbound_date),
+                 "_ajax[requestParams][returnDate]": changed_string(return_date),
+                 "_ajax[requestParams][adultCount]": "1",
+                 "_ajax[requestParams][childCount]": "0",
+                 "_ajax[requestParams][infantCount]": "0",
+                 "_ajax[requestParams][openDateOverview]": "",
+                 }
+
+    domain = "http://www.flyniki.com/en/start.php"
+
+    # sending responses
     virgin = requests.Session()
     virgin.get(domain)
     second = virgin.post(domain, data=values)
     third = virgin.post(second.url, data=form_data)
+
+    # json processing
     data_unicode = third.json()
-    readable_json = json.dumps(data_unicode, indent=4, sort_keys=True)
     general_tree = html.fromstring(data_unicode['templates']['main'])
     departure = general_tree.xpath(".//*[@class=\"outbound block\"]//div[@class=\"vacancy_route\"]/text()")
     destination = general_tree.xpath(".//*[@class=\"return block\"]//div[@class=\"vacancy_route\"]/text()")
     prices = general_tree.xpath(".//div[@class=\"current\"]/span/text()")
-    satan_price = general_tree.xpath(".//*[@id='flighttables']/div[1]/div[2]/table/tbody/tr[1]/td[5]//div[@class=\"current\"]/span/text()")
-    # return departure, destination, list(prices)
     return departure, destination, prices
 
 
-print to_start()
+# print get_prices("warsaw", "sofia", "15/06/2016", "22/06/2016")
+
+def main():
+    # This command-line parsing code is provided.
+    # Make a list of command line arguments, omitting the [0] element
+    # which is the script itself.
+    args = sys.argv[1:]
+
+    if not args:
+        print 'format of query: origin_city destination_city outboundDate(\"dd/mm/yy\") returnDate(\"dd/mm/yy\"))'
+        sys.exit(1)
+    try:
+        origin = sys.argv[1]
+        destination = sys.argv[2]
+        outbound_date = sys.argv[3]
+        return_date = sys.argv[4]
+        print "flights: ", get_prices(origin, destination, outbound_date, return_date)
+        sys.exit()
+    except RuntimeError:
+        print "excepted for format of query: origin_city destination_city outboundDate(\"dd/mm/yy\") returnDate(\"dd/mm/yy\"))"
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
